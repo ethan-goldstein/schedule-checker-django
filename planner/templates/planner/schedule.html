@@ -36,6 +36,7 @@
                 <th>Days</th>
                 <th>Time</th>
                 <th>Credits</th>
+                <th>Location</th>
                 <th></th>
             </tr>
             {% for course in courses %}
@@ -45,6 +46,7 @@
                     <td>{{ course.get_days_display }}</td>
                     <td>{{ course.start_time|time:"g:i A" }} - {{ course.end_time|time:"g:i A" }}</td>
                     <td>{{ course.credits }}</td>
+                    <td>{{ course.location|default:"TBA" }}</td>
                     <td>
                         <form method="post" action="{% url 'delete_course' course.pk %}">
                             {% csrf_token %}

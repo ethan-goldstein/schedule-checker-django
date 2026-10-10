@@ -6,10 +6,11 @@ from .models import Course
 class CourseForm(forms.ModelForm):
     class Meta:
         model = Course
-        fields = ['code', 'title', 'days', 'start_time', 'end_time', 'credits']
+        fields = ['code', 'title', 'days', 'start_time', 'end_time', 'credits', 'location']
         widgets = {
             'start_time': forms.TimeInput(attrs={'type': 'time'}),
             'end_time': forms.TimeInput(attrs={'type': 'time'}),
+            'location': forms.TextInput(attrs={'placeholder': 'Swearingen 2A21'}),
         }
 
     def clean(self):

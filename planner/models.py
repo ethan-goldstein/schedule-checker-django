@@ -19,6 +19,7 @@ class Course(models.Model):
     start_time = models.TimeField()
     end_time = models.TimeField()
     credits = models.PositiveSmallIntegerField(default=3)
+    location = models.CharField(max_length=50, blank=True, default='')
 
     def __str__(self):
         return f'{self.code} - {self.title}'
