@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule Checker</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; }
+        h1 { color: #73000a; }
+        form p { margin: 8px 0; }
+        table { border-collapse: collapse; width: 100%; margin-top: 16px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background: #f2f2f2; }
+        .warning { background: #fdecea; border: 1px solid #f5c2c0; padding: 10px; margin-top: 16px; }
+        .good { background: #e8f5e9; border: 1px solid #b7dfb9; padding: 10px; margin-top: 16px; }
+        button { cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Schedule Checker</h1>
+    <p>Add the classes you plan to take. The app checks for time conflicts and adds up your credits.</p>
+
+    <h2>Add a class</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Add class</button>
+    </form>
+
+    <h2>My classes</h2>
+    {% if courses %}
+        <table>
+            <tr>
+                <th>Course</th>
+                <th>Title</th>
+                <th>Days</th>
+                <th>Time</th>
+                <th>Credits</th>
+                <th></th>
+            </tr>
+            {% for course in courses %}
+                <tr>
+                    <td>{{ course.code }}</td>
+                    <td>{{ course.title }}</td>
+                    <td>{{ course.get_days_display }}</td>
+                    <td>{{ course.start_time|time:"g:i A" }} - {{ course.end_time|time:"g:i A" }}</td>
+                    <td>{{ course.credits }}</td>
+                    <td>
+                        <form method="post" action="{% url 'delete_course' course.pk %}">
+                            {% csrf_token %}
+                            <button type="submit">Remove</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+
+        <p><strong>Total credits:</strong> {{ total_credits }}</p>
+
+        {% if over_limit %}
+            <div class="warning">You are over {{ max_credits }} credits. You would need approval to take this many hours.</div>
+        {% endif %}
+
+        {% if conflicts %}
+            <div class="warning">
+                <strong>Time conflicts:</strong>
+                <ul>
+                    {% for first, second in conflicts %}
+                        <li>{{ first.code }} overlaps with {{ second.code }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% else %}
+            <div class="good">No time conflicts. This schedule works.</div>
+        {% endif %}
+    {% else %}
+        <p>No classes added yet.</p>
+    {% endif %}
+</body>
+</html>
